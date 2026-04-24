@@ -1,0 +1,16 @@
+{
+    "name": "FactoryLab.Ui",
+    "rootNamespace": "",
+    "references": [
+        "GUID:061c866505b4b8b4e9b9dffc5511554f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
