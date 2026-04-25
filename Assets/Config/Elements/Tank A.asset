@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7769e41f75a66b34e98dc43ac11d9144, type: 3}
+  m_Name: Tank A
+  m_EditorClassIdentifier: 
+  elementName: Tank A
+  category: {fileID: 11400000, guid: c53eb6e34d81736418a78d9e0034077c, type: 2}
+  size: {x: 1, y: 1, z: 1}
+  color: {r: 0.35192096, g: 0.8301887, b: 0.23887502, a: 1}
+  primitiveShape: 3
+  ports:
+  - portName: 
+    portType: 1
+    compatibleElements:
+    - {fileID: 11400000, guid: 5b7dbbe35bf6aa74cbadb65f7685e6b6, type: 2}
+    - {fileID: 11400000, guid: 342b42d45fb529b478cba948bb59e67f, type: 2}

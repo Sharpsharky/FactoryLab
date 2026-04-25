@@ -8,6 +8,9 @@ namespace FactoryLab.Core.Data
     {
         public string portName;
         public PortType portType;
-        public List<string> compatibleWith = new ();
+        public List<ElementDefinitionSO> compatibleElements   = new();
+
+        public bool IsCompatibleWith(ElementDefinitionSO element) =>
+            compatibleElements.Contains(element);
     }
 }

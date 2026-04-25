@@ -7,7 +7,7 @@ namespace FactoryLab.Core.Data
     public class ElementDefinitionSO : ScriptableObject
     {
         public string elementName;
-        public string category;
+        public CategorySO category;
         public Vector3 size = Vector3.one;
         public Color color = Color.white;
         public PrimitiveType primitiveShape = PrimitiveType.Cube;
