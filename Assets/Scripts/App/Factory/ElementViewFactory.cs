@@ -37,7 +37,6 @@ namespace FactoryLab.App.Factory
             body.transform.localPosition = new Vector3(0f, def.size.y * 0.5f, 0f);
             body.GetComponent<Renderer>().material.color = def.color;
 
-            // Ports handle their own colliders — body collider drives element dragging
             var col = body.GetComponent<Collider>();
             if (col != null) col.enabled = true;
         }

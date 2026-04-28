@@ -65,14 +65,11 @@ namespace FactoryLab.App.Controllers
             }
         }
 
-        public void AddConnection(string fromElementId, string fromPortName,
-                                  string toElementId,   string toPortName)
+        public void AddConnection(string fromElementId, string toElementId,
+                                  PortView fromPort, PortView toPort)
         {
-            var connection = new ConnectionData(fromElementId, fromPortName, toElementId, toPortName);
+            var connection = new ConnectionData(fromElementId, toElementId);
             _layoutState.AddConnection(connection);
-
-            var fromPort = _elementViews[fromElementId].GetPortView(fromPortName);
-            var toPort   = _elementViews[toElementId].GetPortView(toPortName);
 
             var go       = new GameObject($"Connection_{connection.Id}");
             var connView = go.AddComponent<ConnectionView>();

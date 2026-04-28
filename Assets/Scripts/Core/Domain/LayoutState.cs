@@ -5,10 +5,10 @@ namespace FactoryLab.Core.Domain
 {
     public class LayoutState
     {
-        private readonly List<PlacedElement> _elements = new ();
-        private readonly List<ConnectionData> _connections = new ();
+        private readonly List<PlacedElement>  _elements    = new();
+        private readonly List<ConnectionData> _connections = new();
 
-        public IReadOnlyList<PlacedElement> Elements => _elements;
+        public IReadOnlyList<PlacedElement>  Elements    => _elements;
         public IReadOnlyList<ConnectionData> Connections => _connections;
 
         public void AddElement(PlacedElement element) => _elements.Add(element);
@@ -38,15 +38,8 @@ namespace FactoryLab.Core.Domain
         public IEnumerable<ConnectionData> GetConnectionsTo(string elementId) =>
             _connections.Where(c => c.ToElementId == elementId);
 
-        public IEnumerable<ConnectionData> GetConnectionsForPort(string elementId, string portName) =>
-            _connections.Where(c =>
-                (c.FromElementId == elementId && c.FromPortName == portName) ||
-                (c.ToElementId == elementId && c.ToPortName == portName));
-
-        public bool IsPortConnected(string elementId, string portName) =>
-            _connections.Any(c =>
-                (c.FromElementId == elementId && c.FromPortName == portName) ||
-                (c.ToElementId == elementId && c.ToPortName == portName));
+        public bool HasConnectionBetween(string fromId, string toId) =>
+            _connections.Any(c => c.FromElementId == fromId && c.ToElementId == toId);
 
         public void Clear()
         {
