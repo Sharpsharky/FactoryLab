@@ -1,16 +1,17 @@
+using System;
 using UnityEngine;
 using Zenject;
 using FactoryLab.App.Views;
 
 namespace FactoryLab.App.Controllers
 {
-    public class DragDropController : ITickable
+    public class DragDropController : ITickable, IInitializable, IDisposable
     {
-        private readonly Camera _camera;
+        private readonly Camera          _camera;
         private readonly TableController _table;
 
         private PlacedElementView _dragging;
-        private float _tableY;
+        private float             _tableY;
 
         public bool IsDragging => _dragging != null;
 
@@ -21,6 +22,9 @@ namespace FactoryLab.App.Controllers
             _table  = table;
             _tableY = 0f;
         }
+
+        public void Initialize() => _table.OnElementSpawned += BeginDrag;
+        public void Dispose()    => _table.OnElementSpawned -= BeginDrag;
 
         public void BeginDrag(PlacedElementView view) => _dragging = view;
 
@@ -59,7 +63,7 @@ namespace FactoryLab.App.Controllers
             if (hit.collider.GetComponent<PortView>() != null) return;
 
             var view = hit.collider.GetComponentInParent<PlacedElementView>();
-            if (view != null) _table.RequestContextMenu(view.Data);
+            if (view != null) _table.RequestContextMenu(view.Data, Input.mousePosition);
         }
 
         private void UpdateDraggedPosition()
@@ -74,8 +78,8 @@ namespace FactoryLab.App.Controllers
             var pos = HitTable();
             if (pos.HasValue)
             {
-                _dragging.Data.Position       = pos.Value;
-                _dragging.transform.position  = pos.Value;
+                _dragging.Data.Position      = pos.Value;
+                _dragging.transform.position = pos.Value;
             }
             _dragging = null;
         }

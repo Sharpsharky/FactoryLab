@@ -2,28 +2,24 @@ using System.Text;
 using UnityEngine;
 using Zenject;
 using FactoryLab.Core.Data;
+using FactoryLab.Core.Interfaces;
 using FactoryLab.Core.Validation;
 
 namespace FactoryLab.App.Controllers
 {
     public class DebugSpawner : MonoBehaviour
     {
-        private ElementLibrarySO   _library;
-        private TableController    _table;
-        private DragDropController _dragDrop;
-        private ValidationService  _validation;
-        private Camera             _camera;
+        private ElementLibrarySO  _library;
+        private IElementSpawner   _spawner;
+        private ILayoutController _layoutController;
 
         [Inject]
-        public void Construct(ElementLibrarySO library, TableController table,
-                              DragDropController dragDrop, ValidationService validation,
-                              Camera camera)
+        public void Construct(ElementLibrarySO library, IElementSpawner spawner,
+                              ILayoutController layoutController)
         {
-            _library    = library;
-            _table      = table;
-            _dragDrop   = dragDrop;
-            _validation = validation;
-            _camera     = camera;
+            _library          = library;
+            _spawner          = spawner;
+            _layoutController = layoutController;
         }
 
         private void Update()
@@ -31,29 +27,20 @@ namespace FactoryLab.App.Controllers
             for (int i = 0; i < _library.elements.Count && i < 9; i++)
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-                    Spawn(i);
+                    _spawner.SpawnElement(_library.elements[i]);
             }
 
             if (Input.GetKeyDown(KeyCode.V))
                 RunValidation();
         }
 
-        private void Spawn(int index)
-        {
-            var pos = _camera.transform.position + _camera.transform.forward * 5f;
-            pos.y = 0f;
-
-            var view = _table.SpawnAndGet(_library.elements[index], pos);
-            _dragDrop.BeginDrag(view);
-        }
-
         private void RunValidation()
         {
-            var result = _validation.Validate(_table.LayoutState);
+            var result = _layoutController.ValidateLayout();
             var sb = new StringBuilder();
 
             sb.AppendLine(result.IsValid
-                ? "ALID LAYOUT"
+                ? "VALID LAYOUT"
                 : $"issues: {result.Issues.Count}");
 
             foreach (var issue in result.Issues)

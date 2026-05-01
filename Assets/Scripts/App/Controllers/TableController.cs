@@ -13,13 +13,15 @@ namespace FactoryLab.App.Controllers
 {
     public class TableController : IElementSpawner
     {
-        private readonly LayoutState _layoutState;
-        private readonly ElementViewFactory _factory;
+        private readonly LayoutState         _layoutState;
+        private readonly ElementViewFactory  _factory;
 
-        private readonly Dictionary<string, PlacedElementView> _elementViews = new();
+        private readonly Dictionary<string, PlacedElementView> _elementViews    = new();
         private readonly Dictionary<string, ConnectionView>    _connectionViews = new();
 
-        public event Action<PlacedElement> OnContextMenuRequested;
+        public event Action<PlacedElementView>      OnElementSpawned;
+        public event Action<PlacedElement, Vector2> OnContextMenuRequested;
+        public event Action                         OnLayoutChanged;
 
         public LayoutState LayoutState => _layoutState;
 
@@ -30,19 +32,15 @@ namespace FactoryLab.App.Controllers
             _factory     = factory;
         }
 
-        public void SpawnElement(ElementDefinitionSO definition, Vector3 position)
+        public void SpawnElement(ElementDefinitionSO definition)
         {
-            SpawnAndGet(definition, position);
-        }
-
-        public PlacedElementView SpawnAndGet(ElementDefinitionSO definition, Vector3 position)
-        {
-            var element = new PlacedElement(definition, position);
+            var element = new PlacedElement(definition, Vector3.zero);
             _layoutState.AddElement(element);
 
             var view = _factory.CreateElementView(element);
             _elementViews[element.Id] = view;
-            return view;
+
+            OnElementSpawned?.Invoke(view);
         }
 
         public void RemoveElement(string elementId)
@@ -63,6 +61,8 @@ namespace FactoryLab.App.Controllers
                 UnityEngine.Object.Destroy(view.gameObject);
                 _elementViews.Remove(elementId);
             }
+
+            OnLayoutChanged?.Invoke();
         }
 
         public void AddConnection(string fromElementId, string toElementId,
@@ -75,16 +75,19 @@ namespace FactoryLab.App.Controllers
             var connView = go.AddComponent<ConnectionView>();
             connView.Initialize(connection.Id, fromPort, toPort);
             _connectionViews[connection.Id] = connView;
+
+            OnLayoutChanged?.Invoke();
         }
 
         public void RemoveConnection(string connectionId)
         {
             _layoutState.RemoveConnection(connectionId);
             DestroyConnectionView(connectionId);
+            OnLayoutChanged?.Invoke();
         }
 
-        public void RequestContextMenu(PlacedElement element) =>
-            OnContextMenuRequested?.Invoke(element);
+        public void RequestContextMenu(PlacedElement element, Vector2 screenPos) =>
+            OnContextMenuRequested?.Invoke(element, screenPos);
 
         public PlacedElementView GetView(string elementId) =>
             _elementViews.GetValueOrDefault(elementId);
@@ -104,6 +107,61 @@ namespace FactoryLab.App.Controllers
         {
             foreach (var view in _elementViews.Values)
                 view.SetHighlight(HighlightState.Default);
+        }
+
+        public void ClearAll()
+        {
+            foreach (var view in _connectionViews.Values)
+                UnityEngine.Object.Destroy(view.gameObject);
+            _connectionViews.Clear();
+
+            foreach (var view in _elementViews.Values)
+                UnityEngine.Object.Destroy(view.gameObject);
+            _elementViews.Clear();
+
+            _layoutState.Clear();
+        }
+
+        public void LoadLayout(LayoutSaveData data, ElementLibrarySO library)
+        {
+            ClearAll();
+
+            foreach (var eData in data.Elements)
+            {
+                var def = library.GetByName(eData.DefinitionName);
+                if (def == null)
+                {
+                    Debug.LogWarning($"[Load] Definition not found: {eData.DefinitionName}");
+                    continue;
+                }
+
+                var pos     = new Vector3(eData.X, eData.Y, eData.Z);
+                var element = new PlacedElement(eData.Id, def, pos);
+                _layoutState.AddElement(element);
+                var view = _factory.CreateElementView(element);
+                _elementViews[element.Id] = view;
+            }
+
+            foreach (var cData in data.Connections)
+            {
+                var fromView = _elementViews.GetValueOrDefault(cData.FromElementId);
+                var toView   = _elementViews.GetValueOrDefault(cData.ToElementId);
+                if (fromView == null || toView == null) continue;
+
+                var fromPort = fromView.GetOutputPort();
+                var toPort   = toView.GetInputPort();
+                if (fromPort == null || toPort == null) continue;
+
+                var connection = new ConnectionData(cData.Id, cData.FromElementId, cData.ToElementId);
+                _layoutState.AddConnection(connection);
+
+                var go       = new UnityEngine.GameObject($"Connection_{cData.Id}");
+                var connView = go.AddComponent<ConnectionView>();
+                connView.Initialize(cData.Id, fromPort, toPort);
+                _connectionViews[cData.Id] = connView;
+            }
+
+            OnLayoutChanged?.Invoke();
         }
 
         private void DestroyConnectionView(string connectionId)

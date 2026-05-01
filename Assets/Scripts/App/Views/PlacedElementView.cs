@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using FactoryLab.Core.Data;
 using FactoryLab.Core.Domain;
 
 namespace FactoryLab.App.Views
@@ -38,6 +39,12 @@ namespace FactoryLab.App.Views
 
         public PortView GetPortView(string portName) =>
             _portViews.FirstOrDefault(p => p.PortName == portName);
+
+        public PortView GetOutputPort() =>
+            _portViews.FirstOrDefault(p => p.Direction == PortType.Output);
+
+        public PortView GetInputPort() =>
+            _portViews.FirstOrDefault(p => p.Direction == PortType.Input);
 
         public IReadOnlyList<PortView> PortViews => _portViews;
     }

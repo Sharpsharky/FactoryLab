@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using FactoryLab.Core;
@@ -8,6 +7,7 @@ using FactoryLab.Core.Interfaces;
 using FactoryLab.Core.Validation;
 using FactoryLab.App.Factory;
 using FactoryLab.App.Controllers;
+using FactoryLab.App.Services;
 
 namespace FactoryLab.App.Installers
 {
@@ -33,6 +33,8 @@ namespace FactoryLab.App.Installers
 
             BindValidators();
 
+            Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
+            Container.Bind<ISaveLoadService>().To<SaveLoadService>().AsSingle();
             Container.BindInterfacesAndSelfTo<DragDropController>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PortConnectionController>().AsSingle().NonLazy();
 
