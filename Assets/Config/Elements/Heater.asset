@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7769e41f75a66b34e98dc43ac11d9144, type: 3}
   m_Name: Heater
   m_EditorClassIdentifier: 
+  _id: cb147532-4c4c-4ab9-81d7-fd8dd65fe1cf
   elementName: Heater
   category: {fileID: 11400000, guid: 93581a899cd3e90488106a3cfdeff084, type: 2}
   size: {x: 1, y: 1, z: 1}
   color: {r: 0.24448201, g: 0.64097565, b: 0.7735849, a: 1}
   primitiveShape: 0
   ports:
-  - portName: 
+  - portName: 1
     portType: 0
     compatibleElements:
     - {fileID: 11400000, guid: 5b7dbbe35bf6aa74cbadb65f7685e6b6, type: 2}
-  - portName: 
+  - portName: 2
     portType: 1
     compatibleElements:
     - {fileID: 11400000, guid: abe156d126dc8f540b509b7ec96ad6ae, type: 2}
