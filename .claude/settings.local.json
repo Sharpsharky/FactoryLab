@@ -4,7 +4,8 @@
       "Bash(git -C \"E:/Projects/Unity/FactoryLab\" show HEAD:Assets/Scripts/Core/Editor/DefaultLibraryGenerator.cs)",
       "Bash(git -C \"E:/Projects/Unity/FactoryLab\" status --short)",
       "Bash(git *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(Test-Path *)"
     ]
   }
 }
