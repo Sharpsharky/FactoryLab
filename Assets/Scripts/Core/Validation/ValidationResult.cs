@@ -10,7 +10,6 @@ namespace FactoryLab.Core.Validation
         public IReadOnlyList<ValidationIssue> Issues      => _issues;
         public bool                           IsValid      => !HasErrors;
         public bool                           HasErrors    => _issues.Any(i => i.Type == ValidationIssueType.Error);
-        public bool                           HasWarnings  => _issues.Any(i => i.Type == ValidationIssueType.Warning);
 
         public void AddError(string description, string elementId = null) =>
             _issues.Add(new ValidationIssue(ValidationIssueType.Error, description, elementId));

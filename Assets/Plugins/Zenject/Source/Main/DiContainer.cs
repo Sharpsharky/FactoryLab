@@ -438,8 +438,6 @@ namespace Zenject
 
             var validatables = new List<IValidatable>();
 
-            // Repeatedly flush the validation queue until it's empty, to account for
-            // cases where calls to Validate() add more objects to the queue
             while (_validationQueue.Any())
             {
                 validatables.Clear();

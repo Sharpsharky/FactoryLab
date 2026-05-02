@@ -32,11 +32,10 @@ namespace FactoryLab.App.Services
             foreach (var element in _layoutState.Elements)
                 data.Elements.Add(new ElementSaveData
                 {
-                    Id             = element.Id,
-                    DefinitionName = element.Definition.elementName,
-                    X              = element.Position.x,
-                    Y              = element.Position.y,
-                    Z              = element.Position.z
+                    Id           = element.Id,
+                    DefinitionId = element.Definition.Id,
+                    X            = element.Position.x,
+                    Z            = element.Position.z
                 });
 
             foreach (var conn in _layoutState.Connections)

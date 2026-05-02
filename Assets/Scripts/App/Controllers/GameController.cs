@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 using FactoryLab.Core;
 using FactoryLab.Core.Domain;
 using FactoryLab.Core.Interfaces;
 using FactoryLab.Core.Validation;
-using FactoryLab.App;
 
 namespace FactoryLab.App.Controllers
 {
@@ -66,13 +66,17 @@ namespace FactoryLab.App.Controllers
         {
             if (_evaluationMode == EvaluationMode.Learning)
                 ValidateLayout();
+            else
+                _table.ClearHighlights();
         }
 
         private void ApplyHighlights(ValidationResult result)
         {
             if (result.IsValid)
             {
-                _table.ClearHighlights();
+                var allGreen = _layoutState.Elements
+                    .ToDictionary(e => e.Id, _ => HighlightState.Valid);
+                _table.ApplyHighlights(allGreen);
                 return;
             }
 

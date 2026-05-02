@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 using FactoryLab.Core.Data;
 using FactoryLab.Core.Interfaces;
@@ -11,6 +10,8 @@ namespace FactoryLab.Ui.Views
 {
     public class LibraryPanelView : MonoBehaviour
     {
+        private const string LabelAll = "All";
+
         [SerializeField] private TMP_Dropdown    _categoryDropdown;
         [SerializeField] private Transform       _itemContainer;
         [SerializeField] private LibraryItemView _itemPrefab;
@@ -30,15 +31,15 @@ namespace FactoryLab.Ui.Views
 
         private void Start()
         {
+            _categories.Add(null);
             _categories.AddRange(_library.GetAllCategories());
+
             _categoryDropdown.options = _categories
-                .Select(c => new TMP_Dropdown.OptionData(c.title))
+                .Select(c => new TMP_Dropdown.OptionData(c != null ? c.title : LabelAll))
                 .ToList();
 
             _categoryDropdown.onValueChanged.AddListener(i => RefreshItems(_categories[i]));
-
-            if (_categories.Count > 0)
-                RefreshItems(_categories[0]);
+            RefreshItems(null);
         }
 
         private void RefreshItems(CategorySO category)
@@ -47,7 +48,11 @@ namespace FactoryLab.Ui.Views
                 Destroy(item.gameObject);
             _items.Clear();
 
-            foreach (var def in _library.GetByCategory(category))
+            var defs = category != null
+                ? _library.GetByCategory(category)
+                : _library.GetAllCategories().SelectMany(c => _library.GetByCategory(c));
+
+            foreach (var def in defs)
             {
                 var item = Instantiate(_itemPrefab, _itemContainer);
                 item.Initialize(def, _spawner);

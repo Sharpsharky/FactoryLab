@@ -2,12 +2,17 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 using FactoryLab.Core.Data;
+using FactoryLab.Core.Domain;
 using FactoryLab.App.Views;
 
 namespace FactoryLab.App.Controllers
 {
     public class PortConnectionController : ITickable
     {
+        private const int   MouseButtonLeft  = 0;
+        private const int   MouseButtonRight = 1;
+        private const float RaycastDistance  = 100f;
+
         private readonly Camera             _camera;
         private readonly TableController    _table;
         private readonly DragDropController _dragDrop;
@@ -25,15 +30,41 @@ namespace FactoryLab.App.Controllers
         public void Tick()
         {
             if (_dragDrop.IsDragging) return;
-            if (!Input.GetMouseButtonDown(0)) return;
+
+            if (Input.GetMouseButtonDown(MouseButtonRight))
+            {
+                CheckPortRightClick();
+                return;
+            }
+
+            if (!Input.GetMouseButtonDown(MouseButtonLeft)) return;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out var hit, 100f)) return;
+            if (!Physics.Raycast(ray, out var hit, RaycastDistance)) return;
 
             var port = hit.collider.GetComponent<PortView>();
             if (port == null) { CancelPending(); return; }
 
             HandlePortClick(port);
+        }
+
+        private void CheckPortRightClick()
+        {
+            var ray = _camera.ScreenPointToRay(Input.mousePosition);
+            if (!Physics.Raycast(ray, out var hit, RaycastDistance)) return;
+
+            var port = hit.collider.GetComponent<PortView>();
+            if (port == null) return;
+
+            CancelPending();
+
+            var elementId   = port.Owner.Data.Id;
+            var connections = port.Direction == PortType.Output
+                ? _table.LayoutState.GetConnectionsFrom(elementId).ToList()
+                : _table.LayoutState.GetConnectionsTo(elementId).ToList();
+
+            foreach (var conn in connections)
+                _table.RemoveConnection(conn.Id);
         }
 
         private void HandlePortClick(PortView port)

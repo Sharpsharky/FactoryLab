@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 using FactoryLab.Core.Data;
 using FactoryLab.Core.Domain;
 using FactoryLab.App.Views;
@@ -9,21 +10,35 @@ namespace FactoryLab.App.Factory
 {
     public class ElementViewFactory
     {
-        private const float PortSphereScale = 0.2f;
-        private const float PortSideOffset  = 0.35f;
+        private const float PortSphereScale    = 0.2f;
+        private const float PortSideOffset     = 0.35f;
+        private const float PortZSpread        = 0.3f;
+        private const float TitleCanvasYOffset = 0.4f;
+
+        private readonly PlacedElementView _prefab;
+        private readonly Camera            _camera;
+
+        [Inject]
+        public ElementViewFactory([Inject(Id = "ElementPrefab")] PlacedElementView prefab, Camera camera)
+        {
+            _prefab  = prefab;
+            _camera  = camera;
+        }
 
         public PlacedElementView CreateElementView(PlacedElement element)
         {
             var def  = element.Definition;
-            var root = new GameObject(def.elementName);
-            root.transform.position = element.Position;
+            var view = Object.Instantiate(_prefab);
+            view.name                    = def.elementName;
+            view.transform.position      = element.Position;
 
-            CreateBody(def, root.transform);
+            if (view.TitleCanvas != null)
+                view.TitleCanvas.localPosition = new Vector3(0f, def.size.y + TitleCanvasYOffset, 0f);
 
-            var view = root.AddComponent<PlacedElementView>();
+            CreateBody(def, view.transform);
 
-            var portViews = CreatePorts(def, root.transform, view);
-            view.Initialize(element, portViews);
+            var portViews = CreatePorts(def, view.transform, view);
+            view.Initialize(element, portViews, _camera);
 
             return view;
         }
@@ -68,7 +83,7 @@ namespace FactoryLab.App.Factory
             {
                 float zPos = ports.Count == 1
                     ? 0f
-                    : Mathf.Lerp(-elementSize.z * 0.3f, elementSize.z * 0.3f, (float)i / (ports.Count - 1));
+                    : Mathf.Lerp(-elementSize.z * PortZSpread, elementSize.z * PortZSpread, (float)i / (ports.Count - 1));
 
                 var portGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 portGO.name = ports[i].portName;

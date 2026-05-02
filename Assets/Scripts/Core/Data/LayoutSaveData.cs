@@ -14,9 +14,8 @@ namespace FactoryLab.Core.Data
     public class ElementSaveData
     {
         public string Id;
-        public string DefinitionName;
+        public string DefinitionId;
         public float  X;
-        public float  Y;
         public float  Z;
     }
 

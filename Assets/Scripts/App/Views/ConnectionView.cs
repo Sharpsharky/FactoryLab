@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 namespace FactoryLab.App.Views
 {
@@ -8,28 +9,16 @@ namespace FactoryLab.App.Views
         public string ConnectionId { get; private set; }
 
         private LineRenderer _line;
-        private PortView _from;
-        private PortView _to;
+        private PortView     _from;
+        private PortView     _to;
 
-        private void Awake()
-        {
-            _line = GetComponent<LineRenderer>();
-            _line.positionCount = 2;
-            _line.startWidth    = 0.05f;
-            _line.endWidth      = 0.05f;
-            _line.useWorldSpace = true;
-
-            var shader = Shader.Find("Universal Render Pipeline/Unlit")
-                      ?? Shader.Find("Sprites/Default");
-            _line.material             = new Material(shader);
-            _line.material.color       = Color.white;
-        }
+        private void Awake() => _line = GetComponent<LineRenderer>();
 
         public void Initialize(string connectionId, PortView from, PortView to)
         {
             ConnectionId = connectionId;
-            _from = from;
-            _to   = to;
+            _from        = from;
+            _to          = to;
         }
 
         private void Update()
@@ -37,6 +26,12 @@ namespace FactoryLab.App.Views
             if (_from == null || _to == null) return;
             _line.SetPosition(0, _from.transform.position);
             _line.SetPosition(1, _to.transform.position);
+        }
+
+        public class Pool : MonoMemoryPool<string, PortView, PortView, ConnectionView>
+        {
+            protected override void Reinitialize(string connectionId, PortView from, PortView to, ConnectionView view)
+                => view.Initialize(connectionId, from, to);
         }
     }
 }

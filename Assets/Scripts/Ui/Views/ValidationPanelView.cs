@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using Zenject;
 using FactoryLab.Core.Validation;
@@ -10,11 +9,14 @@ namespace FactoryLab.Ui.Views
 {
     public class ValidationPanelView : MonoBehaviour
     {
-        [SerializeField] private GameObject  _panel;
-        [SerializeField] private TMP_Text    _summaryText;
-        [SerializeField] private Transform   _issueContainer;
-        [SerializeField] private TMP_Text    _issuePrefab;
-        [SerializeField] private Button      _closeButton;
+        private const string MessageValid = "Layout is valid";
+
+        private static readonly Color ErrorColor   = new (1f, 0.35f, 0.35f);
+        private static readonly Color WarningColor = new (1f, 0.85f, 0.35f);
+
+        [SerializeField] private TMP_Text  _summaryText;
+        [SerializeField] private Transform _issueContainer;
+        [SerializeField] private TMP_Text  _issuePrefab;
 
         private ILayoutController       _layoutController;
         private readonly List<TMP_Text> _issueTexts = new();
@@ -28,8 +30,6 @@ namespace FactoryLab.Ui.Views
         private void Start()
         {
             _layoutController.OnValidationCompleted += Show;
-            _closeButton.onClick.AddListener(() => _panel.SetActive(false));
-            _panel.SetActive(false);
         }
 
         private void OnDestroy()
@@ -44,7 +44,7 @@ namespace FactoryLab.Ui.Views
             _issueTexts.Clear();
 
             _summaryText.text = result.IsValid
-                ? "Layout is valid"
+                ? MessageValid
                 : $"{result.Issues.Count} issue(s) found";
 
             foreach (var issue in result.Issues)
@@ -52,12 +52,10 @@ namespace FactoryLab.Ui.Views
                 var label = Instantiate(_issuePrefab, _issueContainer);
                 label.text  = $"[{issue.Type}] {issue.Description}";
                 label.color = issue.Type == ValidationIssueType.Error
-                    ? new Color(1f, 0.35f, 0.35f)
-                    : new Color(1f, 0.85f, 0.35f);
+                    ? ErrorColor
+                    : WarningColor;
                 _issueTexts.Add(label);
             }
-
-            _panel.SetActive(true);
         }
     }
 }

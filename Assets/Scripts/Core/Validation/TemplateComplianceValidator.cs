@@ -17,6 +17,25 @@ namespace FactoryLab.Core.Validation
         {
             var result = new ValidationResult();
 
+            var requiredDefs = _template.requiredConnections
+                .SelectMany(r => new[] { r.fromElement, r.toElement })
+                .Where(d => d != null)
+                .Distinct()
+                .ToHashSet();
+
+            foreach (var def in requiredDefs)
+            {
+                bool present = state.Elements.Any(e => e.Definition == def);
+                if (!present)
+                    result.AddError($"Missing element: {def.elementName}");
+            }
+
+            foreach (var element in state.Elements)
+            {
+                if (!requiredDefs.Contains(element.Definition))
+                    result.AddWarning($"Excess element: {element.Definition.elementName}");
+            }
+
             foreach (var required in _template.requiredConnections)
             {
                 bool found = state.Connections.Any(c =>

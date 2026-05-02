@@ -11,6 +11,7 @@ namespace FactoryLab.Ui.Installers
             Container.Bind<LibraryPanelView>().FromComponentInHierarchy().AsSingle();
             Container.Bind<ValidationPanelView>().FromComponentInHierarchy().AsSingle();
             Container.Bind<ContextMenuView>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<ElementInfoPanelView>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

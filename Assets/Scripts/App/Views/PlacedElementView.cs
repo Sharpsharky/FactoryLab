@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 using FactoryLab.Core.Data;
 using FactoryLab.Core.Domain;
 
@@ -9,21 +10,35 @@ namespace FactoryLab.App.Views
 {
     public class PlacedElementView : MonoBehaviour
     {
+        [SerializeField] private TMP_Text  _nameText;
+        [SerializeField] private Transform _titleCanvas;
+
         public PlacedElement Data { get; private set; }
 
-        public event Action<PlacedElementView> OnRightClicked;
-
         private List<PortView> _portViews;
-        private Renderer _bodyRenderer;
-        private Color _baseColor;
+        private Renderer       _bodyRenderer;
+        private Color          _baseColor;
+        private Camera         _camera;
 
-        public void Initialize(PlacedElement data, List<PortView> portViews)
+        public Transform TitleCanvas => _titleCanvas;
+
+        public void Initialize(PlacedElement data, List<PortView> portViews, Camera camera)
         {
-            Data        = data;
-            _portViews  = portViews;
+            Data          = data;
+            _portViews    = portViews;
+            _camera       = camera;
             _bodyRenderer = GetComponentInChildren<Renderer>();
-            _baseColor  = data.Definition.color;
+            _baseColor    = data.Definition.color;
             _bodyRenderer.material.color = _baseColor;
+
+            if (_nameText != null)
+                _nameText.text = data.Definition.elementName;
+        }
+
+        private void Update()
+        {
+            if (_titleCanvas != null && _camera != null)
+                _titleCanvas.rotation = _camera.transform.rotation;
         }
 
         public void SetHighlight(HighlightState state)
@@ -37,15 +52,10 @@ namespace FactoryLab.App.Views
             };
         }
 
-        public PortView GetPortView(string portName) =>
-            _portViews.FirstOrDefault(p => p.PortName == portName);
-
         public PortView GetOutputPort() =>
             _portViews.FirstOrDefault(p => p.Direction == PortType.Output);
 
         public PortView GetInputPort() =>
             _portViews.FirstOrDefault(p => p.Direction == PortType.Input);
-
-        public IReadOnlyList<PortView> PortViews => _portViews;
     }
 }

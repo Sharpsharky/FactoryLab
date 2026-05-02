@@ -18,7 +18,8 @@ namespace FactoryLab.Ui.Views
         {
             _definition    = definition;
             _spawner       = spawner;
-            _nameText.text = definition.elementName;
+            var category   = definition.category != null ? $" ({definition.category.title})" : "";
+            _nameText.text = $"{definition.elementName}{category}";
             _button.onClick.AddListener(() => _spawner.SpawnElement(_definition));
         }
     }
