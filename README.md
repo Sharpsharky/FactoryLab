@@ -4,9 +4,9 @@ Prototype of a factory assembly simulation — place elements on a table, connec
 
 ## How to run
 
-1. Open the project in Unity 2022.3 LTS or newer.
+1. Open the project in Unity.
 2. Open `Assets/Scenes/SampleScene.unity`.
-4. Press Play.
+3. Press Play.
 
 ## Controls
 
