@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 using FactoryLab.Core.Data;
 using FactoryLab.Core.Domain;
@@ -30,6 +31,7 @@ namespace FactoryLab.App.Controllers
         public void Tick()
         {
             if (_dragDrop.IsDragging) return;
+            if (EventSystem.current.IsPointerOverGameObject()) return;
 
             if (Input.GetMouseButtonDown(MouseButtonRight))
             {

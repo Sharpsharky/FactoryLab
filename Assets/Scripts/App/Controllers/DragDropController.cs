@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Zenject;
 using FactoryLab.App.Views;
 
@@ -50,13 +51,21 @@ namespace FactoryLab.App.Controllers
 
         private void BeginDrag(PlacedElementView view)
         {
-            _dragging    = view;
-            _dragOffset  = Vector3.zero;
+            _dragging   = view;
+            _dragOffset = Vector3.zero;
+
+            var pos = HitTable();
+            if (pos.HasValue)
+            {
+                var clamped = ClampToTable(pos.Value);
+                _dragging.transform.position = new Vector3(clamped.x, pos.Value.y + DragHoverHeight, clamped.z);
+            }
         }
         
         private void CheckPickup()
         {
             if (!Input.GetMouseButtonDown(MouseButtonLeft)) return;
+            if (EventSystem.current.IsPointerOverGameObject()) return;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
             if (!Physics.Raycast(ray, out var hit, RaycastDistance)) return;
@@ -79,6 +88,7 @@ namespace FactoryLab.App.Controllers
         private void CheckRightClick()
         {
             if (!Input.GetMouseButtonDown(MouseButtonRight)) return;
+            if (EventSystem.current.IsPointerOverGameObject()) return;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
             if (!Physics.Raycast(ray, out var hit, RaycastDistance)) return;

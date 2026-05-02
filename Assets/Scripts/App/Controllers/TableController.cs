@@ -38,7 +38,7 @@ namespace FactoryLab.App.Controllers
 
         public void SpawnElement(ElementDefinitionSO definition)
         {
-            var element = new PlacedElement(definition, Vector3.zero);
+            var element = new PlacedElement(definition, new Vector3(0f, _tableY, 0f));
             LayoutState.AddElement(element);
 
             var view = _factory.CreateElementView(element);
