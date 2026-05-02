@@ -10,14 +10,16 @@ Prototype of a factory assembly simulation — place elements on a table, connec
 
 ## Controls
 
-Spawn element - Click item in the Library panel
-Move element - Left-click drag 
-Context menu - Right-click on element 
-Connect ports - Click Output port, then Input port 
-Remove connections - Right-click on port 
-Validate - **Validate** button (Test mode) 
-Save / Load - **Save** / **Load** buttons 
-Switch mode - **Mode** dropdown (Learning / Test) 
+| Action | Input |
+|--------|-------|
+| Spawn element | Click item in the Library panel |
+| Move element | Left-click drag |
+| Context menu | Right-click on element |
+| Connect ports | Click Output port, then Input port |
+| Remove connections | Right-click on port |
+| Validate | **Validate** button (Test mode) |
+| Save / Load | **Save** / **Load** buttons |
+| Switch mode | **Mode** dropdown (Learning / Test) |
 
 ## Architecture decisions
 
