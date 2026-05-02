@@ -2,27 +2,22 @@
 
 Prototype of a factory assembly simulation — place elements on a table, connect their ports, validate the layout.
 
-**Unity 2022.3 LTS, URP**
-
 ## How to run
 
 1. Open the project in Unity 2022.3 LTS or newer.
 2. Open `Assets/Scenes/SampleScene.unity`.
-3. Assign serialized fields on `GameInstaller` in the Inspector (library SO, layout template SO, camera, table renderer, element prefab, connection prefab).
 4. Press Play.
 
 ## Controls
 
-| Action | Input |
-|--------|-------|
-| Spawn element | Click item in the Library panel |
-| Move element | Left-click drag |
-| Context menu | Right-click on element |
-| Connect ports | Click Output port, then Input port |
-| Remove connections | Right-click on port |
-| Validate | **Validate** button (Test mode) |
-| Save / Load | **Save** / **Load** buttons |
-| Switch mode | **Mode** dropdown (Learning / Test) |
+Spawn element - Click item in the Library panel
+Move element - Left-click drag 
+Context menu - Right-click on element 
+Connect ports - Click Output port, then Input port 
+Remove connections - Right-click on port 
+Validate - **Validate** button (Test mode) 
+Save / Load - **Save** / **Load** buttons 
+Switch mode - **Mode** dropdown (Learning / Test) 
 
 ## Architecture decisions
 
